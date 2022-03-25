@@ -1,0 +1,21 @@
+{
+    "name": "iterable-map-filter-reduce",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/D31T4/iterable-map-filter-reduce.git"
+    },
+    "devDependencies": {
+        "typescript": "^4.6.3"
+    },
+    "keywords": [
+        "iterable",
+        "typescript"
+    ],
+    "scripts": {
+        "build": "tsc"
+    }
+}
