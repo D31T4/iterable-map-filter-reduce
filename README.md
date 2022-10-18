@@ -1,5 +1,8 @@
 # iterable-map-filter-reduce
-map, filter, reduce for JavaScript iterables.
+
+[![Version](https://img.shields.io/npm/v/@d31t4/linq.ts)](https://img.shields.io/npm/v/@d31t4/linq.ts)
+
+LINQ for JavaScript iterables.
 
 # Usage
 
