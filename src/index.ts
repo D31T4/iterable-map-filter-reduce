@@ -1,39 +1,38 @@
+import _Enumerable from "./enumerable/base";
+import ArrayEnumerable from "./enumerable/array";
+import MapEnumerable from "./enumerable/map";
+import SetEnumerable from "./enumerable/set";
+import ObjectEnumerable from "./enumerable/object";
 
-import ArrayIterator from "./iterator/array";
-import BaseIterator from "./iterator/base";
-import MapIterator from "./iterator/map";
-import ObjectIterator from "./iterator/object";
-import SetIterator from "./iterator/set";
+import range from "./utils/range";
+import { isEnumerable } from "./utils";
 
-namespace Iterator {
-    function isIterable(object: any): boolean {
-        return Boolean(object[Symbol.iterator]);
-    }
-
-    export function from<T>(array: T[]): BaseIterator<T>
-    export function from<T>(set: Set<T>): BaseIterator<T>
-    export function from<TKey, TValue>(map: Map<TKey, TValue>): BaseIterator<[TKey, TValue]>
-    export function from<T>(object: Iterable<T>): BaseIterator<T>
-    export function from<TKey extends string | number | symbol = string | number | symbol, TValue = any>(object: Record<TKey, TValue>): BaseIterator<[TKey, TValue]>
+namespace Enumerable {
+    export function from<T>(array: T[]): _Enumerable<T>
+    export function from<T>(set: Set<T>): _Enumerable<T>
+    export function from<TKey, TValue>(map: Map<TKey, TValue>): _Enumerable<[TKey, TValue]>
+    export function from<T>(object: Iterable<T>): _Enumerable<T>
+    export function from<TKey extends string | number | symbol = string | number | symbol, TValue = any>(object: Record<TKey, TValue>): _Enumerable<[TKey, TValue]>
     export function from(object: any): any {
-        if (isIterable(object)) {
+        if (isEnumerable(object)) {
             if (object instanceof Array)
-                return new ArrayIterator(object);
+                return new ArrayEnumerable(object);
 
             if (object instanceof Set)
-                return new SetIterator(object);
+                return new SetEnumerable(object);
 
             if (object instanceof Map)
-                return new MapIterator(object);
+                return new MapEnumerable(object);
 
-            return new BaseIterator(object);
+            return new _Enumerable(object);
         }
 
         if (typeof object === 'object')
-            return new ObjectIterator(object);
+            return new ObjectEnumerable(object);
 
         throw new Error('object is not iterable');
     }
 }
 
-export default Iterator;
+export { range, isEnumerable };
+export default Enumerable;

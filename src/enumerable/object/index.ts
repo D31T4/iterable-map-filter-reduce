@@ -1,8 +1,7 @@
-
-import BaseIterator from "./base";
+import Enumerable from "../base";
 
 /**wrapper class for objects */
-class ObjectIterator<TKey extends string | number | symbol = string | number | symbol, TValue = any> extends BaseIterator<[TKey, TValue]> {
+class ObjectEnumerable<TKey extends string | number | symbol = string | number | symbol, TValue = any> extends Enumerable<[TKey, TValue]> {
     protected readonly object: Record<TKey, TValue>;
     
     public constructor(object: Record<TKey, TValue>) {
@@ -10,12 +9,21 @@ class ObjectIterator<TKey extends string | number | symbol = string | number | s
         this.object = object;
     }
 
+    public includesKey(key: TKey): boolean {
+        return this.object.hasOwnProperty(key);
+    }
+
     public includes(elm: [TKey, TValue]): boolean {
-        return this.object.hasOwnProperty(elm[0]) && this.object[elm[0]] === elm[1];
+        return this.includesKey(elm[0]) && 
+            this.object[elm[0]] === elm[1];
+    }
+
+    public distinct(): ObjectEnumerable<TKey, TValue> {
+        return this;
     }
 }
 
-export default ObjectIterator;
+export default ObjectEnumerable;
 
 /**
  * transform object into key value pair iterator
@@ -24,7 +32,6 @@ export default ObjectIterator;
  * @returns key value pair iterator
  */
 function* iterateObject<TKey extends string | number | symbol = string | number | symbol, TValue = any>(object: Record<TKey, TValue>): Iterable<[TKey, TValue]> {
-    for (const key in object) {
+    for (const key in object)
         yield [key, object[key]];
-    }
 }

@@ -1,21 +1,28 @@
 {
-    "name": "iterable-map-filter-reduce",
+    "name": "@d31t4/linq.ts",
     "version": "1.0.0",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
+    "description": "LINQ for iterables",
+    "homepage": "https://github.com/D31T4/iterable-map-filter-reduce",
     "license": "MIT",
     "repository": {
         "type": "git",
         "url": "https://github.com/D31T4/iterable-map-filter-reduce.git"
     },
     "devDependencies": {
+        "@types/jest": "^29.1.2",
+        "jest": "^29.2.0",
+        "ts-jest": "^29.0.3",
         "typescript": "^4.6.3"
     },
     "keywords": [
         "iterable",
-        "typescript"
+        "typescript",
+        "LINQ"
     ],
     "scripts": {
-        "build": "tsc"
+        "build": "tsc",
+        "test": "jest"
     }
 }
