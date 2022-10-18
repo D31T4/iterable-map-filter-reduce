@@ -1,6 +1,6 @@
 {
     "name": "@d31t4/linq.ts",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "description": "LINQ for iterables",
@@ -24,5 +24,8 @@
     "scripts": {
         "build": "tsc",
         "test": "jest"
-    }
+    },
+    "files": [
+        "dist/**/*"
+    ]
 }
