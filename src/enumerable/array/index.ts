@@ -38,7 +38,7 @@ class ArrayEnumerable<T> extends Enumerable<T> {
     public last(predicate?: Predicate<T>): T | void {
         return predicate ?
             super.last(predicate) :
-            this.internalEnumerable[this.internalEnumerable.length - 1];
+            this.internalEnumerable.at(-1);
     }
 
     public reverse(): Enumerable<T> {

@@ -1,4 +1,4 @@
-import { map, filter, reduce, sequenceEqual } from '../../utils';
+import { map, filter, reduce, sequenceEqual, limit } from '../../utils';
 import type { Comparer, Predicate } from '../../types';
 import { tautology } from '../../utils/default-functions';
 
@@ -23,7 +23,7 @@ class Enumerable<T> implements Iterable<T> {
      * apply filter operation to an `Iterable`
      * @param predicate 
      */
-    public filter(predicate: (elm: T) => boolean): Enumerable<T> {
+    public filter(predicate: Predicate<T>): Enumerable<T> {
         return new Enumerable(filter(this.internalEnumerable, predicate));
     }
 
@@ -131,6 +131,10 @@ class Enumerable<T> implements Iterable<T> {
 
     public reverse(): Enumerable<T> {
         return new Enumerable([...this].reverse());
+    }
+
+    public limit(n: number): Enumerable<T> {
+        return new Enumerable(limit(this, n));
     }
 
     public sequenceEqual(seq: Iterable<T>): boolean;

@@ -93,3 +93,20 @@ export function* zip<T1, T2>(seq1: Iterable<T1>, seq2: Iterable<T2>): Iterable<[
     }
 }
 
+/**
+ * truncate a sequence
+ * @param seq sequence
+ * @param n no. of sequence in the new sequence.
+ * @returns a new sequences with a maximum of n elements
+ */
+export function* limit<T>(seq: Iterable<T>, n: number): Iterable<T> {
+    let count = 0;
+
+    for (const elm of seq) {
+        if (count++ >= n)
+            break;
+
+        yield elm;
+    }
+}
+

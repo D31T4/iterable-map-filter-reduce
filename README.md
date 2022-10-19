@@ -8,11 +8,11 @@ LINQ for JavaScript iterables.
 
 ```typescript
 
-const arrayIterable = Iterator.from([1, 2, 3])
+const arrayIterable = Enumerable.from([1, 2, 3])
     .filter(x => x > 1)
     .map(x => 2 * x);
 
 
-const objectIterable = Iterator.from({ x: 1, y: 2, z: 3 });
+const objectIterable = Enumerable.from({ x: 1, y: 2, z: 3 });
 
 ```

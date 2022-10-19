@@ -7,7 +7,15 @@ import ObjectEnumerable from "./enumerable/object";
 import range from "./utils/range";
 import { isEnumerable } from "./utils";
 
+import type { Constructor } from './types';
+
 namespace Enumerable {
+    export const TypeMap: [Constructor<object>, Constructor<_Enumerable<any>>][] = [
+        [Array, ArrayEnumerable],
+        [Set, SetEnumerable],
+        [Map, MapEnumerable]
+    ];
+
     export function from<T>(array: T[]): _Enumerable<T>
     export function from<T>(set: Set<T>): _Enumerable<T>
     export function from<TKey, TValue>(map: Map<TKey, TValue>): _Enumerable<[TKey, TValue]>
@@ -15,14 +23,9 @@ namespace Enumerable {
     export function from<TKey extends string | number | symbol = string | number | symbol, TValue = any>(object: Record<TKey, TValue>): _Enumerable<[TKey, TValue]>
     export function from(object: any): any {
         if (isEnumerable(object)) {
-            if (object instanceof Array)
-                return new ArrayEnumerable(object);
-
-            if (object instanceof Set)
-                return new SetEnumerable(object);
-
-            if (object instanceof Map)
-                return new MapEnumerable(object);
+            for (const [Type, EnumerableObject] of TypeMap)
+                if (object instanceof Type)
+                    return new EnumerableObject(object);
 
             return new _Enumerable(object);
         }

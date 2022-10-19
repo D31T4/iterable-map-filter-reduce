@@ -127,4 +127,43 @@ describe(Enumerable, () => {
             )).toBe(true);
         });
     });
+
+    describe(Enumerable.prototype.skip, () => {
+        it('should return an empty sequende if n > no. of elements', () => {
+            expect(sequenceEqual(
+                new Enumerable([0, 1, 2]).skip(4),
+                []
+            )).toBe(true);
+        });
+
+        it('should return an empty sequende if n = no. of elements', () => {
+            expect(sequenceEqual(
+                new Enumerable([0, 1, 2]).skip(3),
+                []
+            )).toBe(true);
+        });
+
+        it('should skip n elements', () => {
+            expect(sequenceEqual(
+                new Enumerable([0, 1, 2]).skip(1),
+                [1, 2]
+            )).toBe(true);
+        });
+    });
+
+    describe(Enumerable.prototype.limit, () => {
+        it('should return the same sequence if no. of elements < n', () => {
+            expect(sequenceEqual(
+                new Enumerable([0, 1, 2]).limit(100),
+                [0, 1, 2]
+            )).toBe(true);
+        });
+
+        it('should return a shorted sequence if n < no. of elements', () => {
+            expect(sequenceEqual(
+                new Enumerable([0, 1, 2]).limit(2),
+                [0, 1]
+            )).toBe(true);
+        });
+    });
 });
