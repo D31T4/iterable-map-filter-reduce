@@ -4,6 +4,8 @@ import Enumerable from "../base";
 declare class MapEnumerable<TKey, TValue> extends Enumerable<[TKey, TValue]> {
     protected readonly internalEnumerable: Map<TKey, TValue>;
     constructor(dict: Map<TKey, TValue>);
+    any(): boolean;
+    any(predicate: Predicate<[TKey, TValue]>): boolean;
     count(): number;
     count(predicate: Predicate<[TKey, TValue]>): number;
     includesKey(key: TKey): boolean;

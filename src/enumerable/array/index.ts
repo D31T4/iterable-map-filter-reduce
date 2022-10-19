@@ -9,6 +9,14 @@ class ArrayEnumerable<T> extends Enumerable<T> {
         super(array);
     }
 
+    public any(): boolean;
+    public any(predicate: Predicate<T>): boolean;
+    public any(predicate?: Predicate<T>): boolean {
+        return predicate ?
+            super.any(predicate) :
+            this.internalEnumerable.length > 0;
+    }
+
     public count(): number;
     public count(predicate: Predicate<T>): number;
     public count(predicate?: Predicate<T>): number {
@@ -44,6 +52,10 @@ class ArrayEnumerable<T> extends Enumerable<T> {
             skip(this.internalEnumerable, n)
         );
     }
+}
+
+Enumerable.prototype.reverse = function<T>(this: Enumerable<T>): Enumerable<T> {
+    return new ArrayEnumerable([...this].reverse());
 }
 
 export default ArrayEnumerable;

@@ -1,8 +1,6 @@
-import { map, filter, reduce, sequenceEqual, isEnumerable } from '../../utils';
+import { map, filter, reduce, sequenceEqual } from '../../utils';
 import type { Comparer, Predicate } from '../../types';
 import { tautology } from '../../utils/default-functions';
-
-import ArrayEnumerable from '../array';
 
 /**a wrapper class wrapping vanilla Iterables */
 class Enumerable<T> implements Iterable<T> {

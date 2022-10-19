@@ -4,6 +4,8 @@ import Enumerable from "../base";
 declare class ArrayEnumerable<T> extends Enumerable<T> {
     protected readonly internalEnumerable: T[];
     constructor(array: T[]);
+    any(): boolean;
+    any(predicate: Predicate<T>): boolean;
     count(): number;
     count(predicate: Predicate<T>): number;
     first(): T | void;

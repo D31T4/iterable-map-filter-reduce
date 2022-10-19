@@ -1,6 +1,7 @@
 import 'jest';
 import range from '../../utils/range';
 import Enumerable from '.';
+import { sequenceEqual } from '../../utils';
 
 describe(Enumerable, () => {
     const array = [...range(10)];
@@ -115,6 +116,15 @@ describe(Enumerable, () => {
         it('should enumerate elements of the sequence', () => {
             for (const [index, value] of new Enumerable(array).enumerate())
                 expect(index).toBe(value);
+        });
+    });
+
+    describe(Enumerable.prototype.reverse, () => {
+        it('should reverse the order of elements in the sequence', () => {
+            expect(sequenceEqual(
+                new Enumerable([0, 1, 2]).reverse(),
+                [2, 1, 0]
+            )).toBe(true);
         });
     });
 });

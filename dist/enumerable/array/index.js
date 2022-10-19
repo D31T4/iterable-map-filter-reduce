@@ -9,6 +9,11 @@ class ArrayEnumerable extends base_1.default {
     constructor(array) {
         super(array);
     }
+    any(predicate) {
+        return predicate ?
+            super.any(predicate) :
+            this.internalEnumerable.length > 0;
+    }
     count(predicate) {
         return predicate ?
             super.count(predicate) :
@@ -31,6 +36,9 @@ class ArrayEnumerable extends base_1.default {
         return new base_1.default(skip(this.internalEnumerable, n));
     }
 }
+base_1.default.prototype.reverse = function () {
+    return new ArrayEnumerable([...this].reverse());
+};
 exports.default = ArrayEnumerable;
 function* skip(seq, n) {
     for (let i = n; i < seq.length; ++i)

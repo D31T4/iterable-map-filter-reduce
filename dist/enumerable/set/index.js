@@ -9,6 +9,11 @@ class SetEnumerable extends base_1.default {
     constructor(set) {
         super(set);
     }
+    any(predicate) {
+        return predicate ?
+            super.any(predicate) :
+            this.internalEnumerable.size > 0;
+    }
     count(predicate) {
         return predicate ?
             super.count(predicate) :

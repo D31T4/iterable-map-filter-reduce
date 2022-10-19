@@ -9,6 +9,14 @@ class MapEnumerable<TKey, TValue> extends Enumerable<[TKey, TValue]> {
         super(dict);
     }
 
+    public any(): boolean;
+    public any(predicate: Predicate<[TKey, TValue]>): boolean;
+    public any(predicate?: Predicate<[TKey, TValue]>): boolean {
+        return predicate ?
+            super.any(predicate) :
+            this.internalEnumerable.size > 0;
+    }
+
     public count(): number;
     public count(predicate: Predicate<[TKey, TValue]>): number;
     public count(predicate?: Predicate<[TKey, TValue]>): number {
