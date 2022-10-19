@@ -1,5 +1,7 @@
-import type { Predicate } from "../../types";
+import type { Predicate, uint } from "../../types";
 import Enumerable from "../base";
+
+import './extension';
 
 /**wrapper class for objects */
 class MapEnumerable<TKey, TValue> extends Enumerable<[TKey, TValue]> {
@@ -17,9 +19,9 @@ class MapEnumerable<TKey, TValue> extends Enumerable<[TKey, TValue]> {
             this.internalEnumerable.size > 0;
     }
 
-    public count(): number;
-    public count(predicate: Predicate<[TKey, TValue]>): number;
-    public count(predicate?: Predicate<[TKey, TValue]>): number {
+    public count(): uint;
+    public count(predicate: Predicate<[TKey, TValue]>): uint;
+    public count(predicate?: Predicate<[TKey, TValue]>): uint {
         return predicate ?
             super.count(predicate) :
             this.internalEnumerable.size;

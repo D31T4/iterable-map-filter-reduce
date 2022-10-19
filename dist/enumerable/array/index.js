@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const base_1 = __importDefault(require("../base"));
+require("./extension");
 /**wrapper class for objects */
 class ArrayEnumerable extends base_1.default {
     constructor(array) {
@@ -27,7 +28,7 @@ class ArrayEnumerable extends base_1.default {
     last(predicate) {
         return predicate ?
             super.last(predicate) :
-            this.internalEnumerable[this.internalEnumerable.length - 1];
+            this.internalEnumerable.at(-1);
     }
     reverse() {
         return new base_1.default(reverse(this.internalEnumerable));
@@ -36,9 +37,6 @@ class ArrayEnumerable extends base_1.default {
         return new base_1.default(skip(this.internalEnumerable, n));
     }
 }
-base_1.default.prototype.reverse = function () {
-    return new ArrayEnumerable([...this].reverse());
-};
 exports.default = ArrayEnumerable;
 function* skip(seq, n) {
     for (let i = n; i < seq.length; ++i)

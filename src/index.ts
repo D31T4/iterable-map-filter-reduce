@@ -5,21 +5,41 @@ import SetEnumerable from "./enumerable/set";
 import ObjectEnumerable from "./enumerable/object";
 
 import range from "./utils/range";
-import { isEnumerable } from "./utils";
+import { isEnumerable, sequenceEqual } from "./utils";
 
 import type { Constructor } from './types';
 
 namespace Enumerable {
-    export const TypeMap: [Constructor<object>, Constructor<_Enumerable<any>>][] = [
+    export const TypeMap: [Constructor<object>, Constructor<_Enumerable<unknown>>][] = [
         [Array, ArrayEnumerable],
         [Set, SetEnumerable],
         [Map, MapEnumerable]
     ];
 
+    /**
+     * creates an enumerable from an array
+     * @param array 
+     */
     export function from<T>(array: T[]): _Enumerable<T>
+    /**
+     * creates an enumerable from a set
+     * @param set
+     */
     export function from<T>(set: Set<T>): _Enumerable<T>
+    /**
+     * creates an enumerable from a map
+     * @param map
+     */
     export function from<TKey, TValue>(map: Map<TKey, TValue>): _Enumerable<[TKey, TValue]>
+    /**
+     * creates an enumerable from an iterable
+     * @param object
+     */
     export function from<T>(object: Iterable<T>): _Enumerable<T>
+    /**
+     * creates an enumerable from an object
+     * @param object
+     */
     export function from<TKey extends string | number | symbol = string | number | symbol, TValue = any>(object: Record<TKey, TValue>): _Enumerable<[TKey, TValue]>
     export function from(object: any): any {
         if (isEnumerable(object)) {
@@ -37,5 +57,5 @@ namespace Enumerable {
     }
 }
 
-export { range, isEnumerable };
+export { range, isEnumerable, sequenceEqual };
 export default Enumerable;

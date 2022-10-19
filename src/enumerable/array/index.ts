@@ -1,5 +1,7 @@
-import type { Predicate } from "../../types";
+import type { Predicate, uint } from "../../types";
 import Enumerable from "../base";
+
+import './extension';
 
 /**wrapper class for objects */
 class ArrayEnumerable<T> extends Enumerable<T> {
@@ -17,9 +19,9 @@ class ArrayEnumerable<T> extends Enumerable<T> {
             this.internalEnumerable.length > 0;
     }
 
-    public count(): number;
-    public count(predicate: Predicate<T>): number;
-    public count(predicate?: Predicate<T>): number {
+    public count(): uint;
+    public count(predicate: Predicate<T>): uint;
+    public count(predicate?: Predicate<T>): uint {
         return predicate ?
             super.count(predicate) :
             this.internalEnumerable.length;
@@ -47,20 +49,16 @@ class ArrayEnumerable<T> extends Enumerable<T> {
         );
     }
 
-    public skip(n: number): Enumerable<T> {
+    public skip(n: uint): Enumerable<T> {
         return new Enumerable(
             skip(this.internalEnumerable, n)
         );
     }
 }
 
-Enumerable.prototype.reverse = function<T>(this: Enumerable<T>): Enumerable<T> {
-    return new ArrayEnumerable([...this].reverse());
-}
-
 export default ArrayEnumerable;
 
-function* skip<T>(seq: T[], n: number): Iterable<T> {
+function* skip<T>(seq: T[], n: uint): Iterable<T> {
     for (let i = n; i < seq.length; ++i)
         yield seq[i];
 }

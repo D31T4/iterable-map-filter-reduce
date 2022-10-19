@@ -1,5 +1,7 @@
-import type { Predicate } from "../../types";
+import type { Predicate, uint } from "../../types";
 import Enumerable from "../base";
+
+import './extension';
 
 /**wrapper class for objects */
 class SetEnumerable<T> extends Enumerable<T> {
@@ -17,9 +19,9 @@ class SetEnumerable<T> extends Enumerable<T> {
             this.internalEnumerable.size > 0;
     }
 
-    public count(): number;
-    public count(predicate: Predicate<T>): number;
-    public count(predicate?: Predicate<T>): number {
+    public count(): uint;
+    public count(predicate: Predicate<T>): uint;
+    public count(predicate?: Predicate<T>): uint {
         return predicate ?
             super.count(predicate) :
             this.internalEnumerable.size;

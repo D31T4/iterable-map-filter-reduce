@@ -61,12 +61,37 @@ describe(Enumerable, () => {
         });
     });
 
+    describe(Enumerable.prototype.all, () => {
+        it('should return true if all elements evaluate to true', () => {
+            expect(new Enumerable([]).all()).toBe(true);
+            expect(new Enumerable([0, 1, 2]).all()).toBe(false);
+            expect(new Enumerable([1, 2, 3]).all()).toBe(true);
+        });
+
+        it('should return true if all element satisfies a predicate', () => {
+            expect(new Enumerable(array).all(x => x >= 0)).toBe(true);
+            expect(new Enumerable(array).all(x => x >= 1)).toBe(false);
+            expect(new Enumerable(array).all(x => x < 0)).toBe(false);
+        });
+    });
+
     describe(Enumerable.prototype.distinct, () => {
         it('should return distinct elements', () => {
             const dups = [0, 0, ...array, 9];
 
             const distinct = [...new Enumerable(dups).distinct()];
     
+            expect(distinct.length).toBe(10);
+    
+            for (let i = 0; i < distinct.length; ++i)
+                expect(distinct[i]).toBe(i);
+        });
+
+        it('should return distinct elements', () => {
+            const dups = [{ x: 0 }, { x: 0 }, ...array.map(x => ({ x })), { x: 9 }];
+
+            const distinct = [...new Enumerable(dups).distinct((a, b) => a.x === b.x).map(obj => obj.x)];
+
             expect(distinct.length).toBe(10);
     
             for (let i = 0; i < distinct.length; ++i)
@@ -164,6 +189,17 @@ describe(Enumerable, () => {
                 new Enumerable([0, 1, 2]).limit(2),
                 [0, 1]
             )).toBe(true);
+        });
+    });
+
+    describe(Enumerable.prototype.count, () => {
+        it('should return no. of elements', () => {
+            expect(new Enumerable([0, 1, 2]).count()).toBe(3);
+        });
+
+        it('should return no. of elements satisfying the predicate', () => {
+            expect(new Enumerable([0, 1, 2]).count(x => x > 2)).toBe(0);
+            expect(new Enumerable([0, 1, 2]).count(x => x >= 1)).toBe(2);
         });
     });
 });

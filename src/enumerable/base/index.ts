@@ -1,5 +1,5 @@
 import { map, filter, reduce, sequenceEqual, limit } from '../../utils';
-import type { Comparer, Predicate } from '../../types';
+import type { EqualityComparer, Comparer, Predicate, uint } from '../../types';
 import { tautology } from '../../utils/default-functions';
 
 /**a wrapper class wrapping vanilla Iterables */
@@ -15,18 +15,28 @@ class Enumerable<T> implements Iterable<T> {
         this.internalEnumerable = enumerable;
     }
 
+    /**
+     * map
+     * @param transformer mapping function
+     */
     public map<T2>(transformer: (elm: T) => T2): Enumerable<T2> {
         return new Enumerable(map<T, T2>(this.internalEnumerable, transformer));
     }
 
     /**
-     * apply filter operation to an `Iterable`
+     * filter all elements satisfying a predicate
      * @param predicate 
      */
     public filter(predicate: Predicate<T>): Enumerable<T> {
         return new Enumerable(filter(this.internalEnumerable, predicate));
     }
 
+    /**
+     * reduce
+     * @param reducer 
+     * @param initiator 
+     * @returns 
+     */
     public reduce<T2>(reducer: (elm: T, accumulator: T2) => T2, initiator: T2): T2 {
         return reduce(this.internalEnumerable, reducer, initiator);
     }
@@ -40,7 +50,14 @@ class Enumerable<T> implements Iterable<T> {
             func(elm);
     }
 
+    /**
+     * @returns first element of the sequence
+     */
     public first(): T | void;
+    /**
+     * @param predicate 
+     * @returns return first element of the sequence satisfying a predicate
+     */
     public first(predicate: Predicate<T>): T | void;
     public first(predicate?: Predicate<T>): T | void {
         predicate ??= tautology;
@@ -52,7 +69,13 @@ class Enumerable<T> implements Iterable<T> {
         return undefined;
     }
 
+    /**
+     * @returns last element of the sequence
+     */
     public last(): T | void;
+    /**
+     * @returns last element of the sequence satisfying a predicate
+     */
     public last(predicate: Predicate<T>): T | void;
     public last(predicate?: Predicate<T>): T | void {
         let last: T | void = undefined;
@@ -65,7 +88,15 @@ class Enumerable<T> implements Iterable<T> {
         return last;
     }
 
+    /**
+     * check if the sequence contains any elements.
+     * @returns `true` if the sequence contains at least 1 element; otherwise `false`.
+     */
     public any(): boolean;
+    /**
+     * check if the sequence contains any elements satisfying a predicate.
+     * @returns `true` if the sequence contains at least 1 element which satisfies the predicate; otherwise `false`.
+     */
     public any(predicate: Predicate<T>): boolean;
     public any(predicate?: Predicate<T>): boolean {
         predicate ??= tautology;
@@ -77,22 +108,37 @@ class Enumerable<T> implements Iterable<T> {
         return false;
     }
 
+    /**
+     * @returns `true` if all elements eveluate to `true`; otherwise `false`.
+     */
     public all(): boolean;
+    /**
+     * @returns `true` if all elements satisfy the predicate; otherwise `false`.
+     */
     public all(predicate: Predicate<T>): boolean;
     public all(predicate?: Predicate<T>): boolean {
-        predicate ??= tautology;
-        predicate = val => !predicate!(val);
-
-        return !this.any(predicate);
+        predicate ??= Boolean;
+        return !this.any(val => !predicate!(val));
     }
 
+    /**
+     * @param elm element
+     * @returns `true` if the element is in the sequence; otherwise `false`.
+     */
     public includes(elm: T): boolean {
         return this.any(val => val === elm);
     }
 
-    public count(): number;
-    public count(predicate: Predicate<T>): number;
-    public count(predicate?: Predicate<T>): number {
+    /**
+     * @returns no. of elements in the sequence.
+     */
+    public count(): uint;
+    /**
+     * @param predicate 
+     * @returns no. of elements satisfying the predicate in the sequence.
+     */
+    public count(predicate: Predicate<T>): uint;
+    public count(predicate?: Predicate<T>): uint {
         predicate ??= tautology;
 
         let count = 0;
@@ -104,42 +150,79 @@ class Enumerable<T> implements Iterable<T> {
         return count;
     }
 
-    public enumerate(): Enumerable<[number, T]> {
+    /**
+     * enumerate the sequence
+     */
+    public enumerate(): Enumerable<[uint, T]> {
         let count = 0;
-        return this.map<[number, T]>(elm => [count++, elm]);
+        return this.map<[uint, T]>(elm => [count++, elm]);
     }
 
     /**
      * skip elements in an iterable
      * @param n no. of elements to be skipped
      */
-    public skip(n: number): Enumerable<T> {
+    public skip(n: uint): Enumerable<T> {
         let count = 0;        
         return this.filter(() => count++ >= n);
     }
 
-    public distinct(): Enumerable<T> {
-        const set = new Set<T>();
+    /**
+     * @returns distinct elements of the sequence.
+     */
+    public distinct(): Enumerable<T>;
+    public distinct(compare: EqualityComparer<T>): Enumerable<T>;
+    public distinct(compare?: EqualityComparer<T>): Enumerable<T> {
+        let pred: Predicate<T>;
 
-        return this.filter(elm => {
-            if (set.has(elm)) return false;
+        if (compare) {
+            const list = new Array<T>();
 
-            set.add(elm);
-            return true;
-        });
+            pred = x => {
+                if (list.some(el => compare(el, x)))
+                    return false;
+
+                list.push(x);
+                return true;
+            };
+        } else {
+            const set = new Set<T>();
+            
+            pred = x => {
+                if (set.has(x)) return false;
+
+                set.add(x);
+                return true;
+            };
+        }
+
+        return this.filter(pred);
     }
 
+    /**
+     * reverse the sequence
+     */
     public reverse(): Enumerable<T> {
         return new Enumerable([...this].reverse());
     }
 
-    public limit(n: number): Enumerable<T> {
+    public sort(): Enumerable<T>;
+    public sort(compare: Comparer<T>): Enumerable<T>;
+    public sort(compare?: Comparer<T>): Enumerable<T> {
+        return new Enumerable([...this].sort(compare));
+    }
+
+    /**
+     * limit
+     * @param n max no. of elements to be returned
+     */
+    public limit(n: uint): Enumerable<T> {
         return new Enumerable(limit(this, n));
     }
 
     public sequenceEqual(seq: Iterable<T>): boolean;
-    public sequenceEqual(seq: Iterable<T>, compare: Comparer<T>): boolean;
-    public sequenceEqual(seq: Iterable<T>, compare?: Comparer<T>): boolean {
+    public sequenceEqual(seq: Iterable<T>, compare: EqualityComparer<T>): boolean;
+    public sequenceEqual(seq: Iterable<T>, compare?: EqualityComparer<T>): boolean {
         return sequenceEqual(this, seq, compare!);
     }
 }

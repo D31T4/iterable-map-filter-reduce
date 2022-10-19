@@ -10,16 +10,26 @@ class Enumerable {
     [Symbol.iterator]() {
         return this.internalEnumerable[Symbol.iterator]();
     }
+    /**
+     * map
+     * @param transformer mapping function
+     */
     map(transformer) {
         return new Enumerable((0, utils_1.map)(this.internalEnumerable, transformer));
     }
     /**
-     * apply filter operation to an `Iterable`
+     * filter all elements satisfying a predicate
      * @param predicate
      */
     filter(predicate) {
         return new Enumerable((0, utils_1.filter)(this.internalEnumerable, predicate));
     }
+    /**
+     * reduce
+     * @param reducer
+     * @param initiator
+     * @returns
+     */
     reduce(reducer, initiator) {
         return (0, utils_1.reduce)(this.internalEnumerable, reducer, initiator);
     }
@@ -54,10 +64,13 @@ class Enumerable {
         return false;
     }
     all(predicate) {
-        predicate !== null && predicate !== void 0 ? predicate : (predicate = default_functions_1.tautology);
-        predicate = val => !predicate(val);
-        return !this.any(predicate);
+        predicate !== null && predicate !== void 0 ? predicate : (predicate = Boolean);
+        return !this.any(val => !predicate(val));
     }
+    /**
+     * @param elm element
+     * @returns `true` if the element is in the sequence; otherwise `false`.
+     */
     includes(elm) {
         return this.any(val => val === elm);
     }
@@ -69,6 +82,9 @@ class Enumerable {
                 ++count;
         return count;
     }
+    /**
+     * enumerate the sequence
+     */
     enumerate() {
         let count = 0;
         return this.map(elm => [count++, elm]);
@@ -81,17 +97,43 @@ class Enumerable {
         let count = 0;
         return this.filter(() => count++ >= n);
     }
-    distinct() {
-        const set = new Set();
-        return this.filter(elm => {
-            if (set.has(elm))
-                return false;
-            set.add(elm);
-            return true;
-        });
+    distinct(compare) {
+        let pred;
+        if (compare) {
+            const list = new Array();
+            pred = x => {
+                if (list.some(el => compare(el, x)))
+                    return false;
+                list.push(x);
+                return true;
+            };
+        }
+        else {
+            const set = new Set();
+            pred = x => {
+                if (set.has(x))
+                    return false;
+                set.add(x);
+                return true;
+            };
+        }
+        return this.filter(pred);
     }
+    /**
+     * reverse the sequence
+     */
     reverse() {
         return new Enumerable([...this].reverse());
+    }
+    sort(compare) {
+        return new Enumerable([...this].sort(compare));
+    }
+    /**
+     * limit
+     * @param n max no. of elements to be returned
+     */
+    limit(n) {
+        return new Enumerable((0, utils_1.limit)(this, n));
     }
     sequenceEqual(seq, compare) {
         return (0, utils_1.sequenceEqual)(this, seq, compare);

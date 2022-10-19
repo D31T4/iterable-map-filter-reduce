@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.zip = exports.reduce = exports.filter = exports.map = exports.sequenceEqual = exports.isEnumerable = exports.iterate = void 0;
+exports.limit = exports.zip = exports.reduce = exports.filter = exports.map = exports.sequenceEqual = exports.isEnumerable = void 0;
 const default_functions_1 = require("./default-functions");
-function* iterate(seq) {
-    for (const elm of seq)
-        yield elm;
-}
-exports.iterate = iterate;
+/**
+ * checks whether an object is iterable
+ * @param obj
+ * @returns `true` if the object is iterable; otherwise `false`.
+ */
 function isEnumerable(obj) {
     return Boolean(obj[Symbol.iterator]);
 }
@@ -14,7 +14,7 @@ exports.isEnumerable = isEnumerable;
 function sequenceEqual(seq1, seq2, compare) {
     if (seq1 === seq2)
         return true;
-    compare !== null && compare !== void 0 ? compare : (compare = default_functions_1.defaultCompare);
+    compare !== null && compare !== void 0 ? compare : (compare = default_functions_1.defaultEqualityComparer);
     const it1 = seq1[Symbol.iterator]();
     const it2 = seq2[Symbol.iterator]();
     let result1 = it1.next();
@@ -35,7 +35,7 @@ function* map(iterable, transformer) {
 exports.map = map;
 /**
  * apply filter operation to an `Iterable`
- * @param seq
+ * @param iterable
  * @param predicate
  */
 function* filter(iterable, predicate) {
@@ -69,3 +69,18 @@ function* zip(seq1, seq2) {
     }
 }
 exports.zip = zip;
+/**
+ * truncate a sequence
+ * @param seq sequence
+ * @param n no. of sequence in the new sequence.
+ * @returns a new sequences with a maximum of n elements
+ */
+function* limit(seq, n) {
+    let count = 0;
+    for (const elm of seq) {
+        if (count++ >= n)
+            break;
+        yield elm;
+    }
+}
+exports.limit = limit;

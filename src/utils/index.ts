@@ -1,11 +1,11 @@
-import type { Predicate, Comparer } from "src/types";
-import { defaultCompare } from "./default-functions";
+import type { Predicate, EqualityComparer, uint } from "src/types";
+import { defaultEqualityComparer } from "./default-functions";
 
-export function* iterate<T>(seq: Iterable<T>) {
-    for (const elm of seq)
-        yield elm;
-}
-
+/**
+ * checks whether an object is iterable
+ * @param obj 
+ * @returns `true` if the object is iterable; otherwise `false`.
+ */
 export function isEnumerable(obj: any): boolean {
     return Boolean(obj[Symbol.iterator]);
 }
@@ -24,11 +24,11 @@ export function sequenceEqual<T>(seq1: Iterable<T>, seq2: Iterable<T>): boolean;
  * @param compare comparator
  * @returns comparison result
  */
-export function sequenceEqual<T>(seq1: Iterable<T>, seq2: Iterable<T>, compare: Comparer<T>): boolean;
-export function sequenceEqual<T>(seq1: Iterable<T>, seq2: Iterable<T>, compare?: Comparer<T>): boolean {
+export function sequenceEqual<T>(seq1: Iterable<T>, seq2: Iterable<T>, compare: EqualityComparer<T>): boolean;
+export function sequenceEqual<T>(seq1: Iterable<T>, seq2: Iterable<T>, compare?: EqualityComparer<T>): boolean {
     if (seq1 === seq2) return true;
 
-    compare ??= defaultCompare;
+    compare ??= defaultEqualityComparer;
 
     const it1 = seq1[Symbol.iterator]();
     const it2 = seq2[Symbol.iterator]();
@@ -54,7 +54,7 @@ export function* map<T1, T2>(iterable: Iterable<T1>, transformer: (elm: T1) => T
 
 /**
  * apply filter operation to an `Iterable`
- * @param seq 
+ * @param iterable 
  * @param predicate 
  */
 export function* filter<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T> {
@@ -99,7 +99,7 @@ export function* zip<T1, T2>(seq1: Iterable<T1>, seq2: Iterable<T2>): Iterable<[
  * @param n no. of sequence in the new sequence.
  * @returns a new sequences with a maximum of n elements
  */
-export function* limit<T>(seq: Iterable<T>, n: number): Iterable<T> {
+export function* limit<T>(seq: Iterable<T>, n: uint): Iterable<T> {
     let count = 0;
 
     for (const elm of seq) {
