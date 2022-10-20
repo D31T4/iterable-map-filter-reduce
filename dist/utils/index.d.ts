@@ -42,3 +42,10 @@ export declare function zip<T1, T2>(seq1: Iterable<T1>, seq2: Iterable<T2>): Ite
  * @returns a new sequences with a maximum of n elements
  */
 export declare function limit<T>(seq: Iterable<T>, n: uint): Iterable<T>;
+/**
+ * create a sequence consisting of n `item`
+ * @param item
+ * @param n no. of repeating items
+ */
+export declare function repeat<T>(item: T, n: uint): Iterable<T>;
+export declare function concat<T>(...args: Iterable<T>[]): Iterable<T>;

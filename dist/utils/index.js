@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.limit = exports.zip = exports.reduce = exports.filter = exports.map = exports.sequenceEqual = exports.isEnumerable = void 0;
+exports.concat = exports.repeat = exports.limit = exports.zip = exports.reduce = exports.filter = exports.map = exports.sequenceEqual = exports.isEnumerable = void 0;
 const default_functions_1 = require("./default-functions");
 /**
  * checks whether an object is iterable
@@ -84,3 +84,18 @@ function* limit(seq, n) {
     }
 }
 exports.limit = limit;
+/**
+ * create a sequence consisting of n `item`
+ * @param item
+ * @param n no. of repeating items
+ */
+function* repeat(item, n) {
+    for (let i = 0; i < n; ++i)
+        yield item;
+}
+exports.repeat = repeat;
+function* concat(...args) {
+    for (const arg of args)
+        yield* arg;
+}
+exports.concat = concat;

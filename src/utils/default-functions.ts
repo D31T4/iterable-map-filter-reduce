@@ -8,4 +8,6 @@ function defaultEqualityComparer(elm1: any, elm2: any): boolean {
     return elm1 === elm2;
 }
 
-export { tautology, defaultEqualityComparer };
+function* emptyGenerator<T>(): Generator<T, void> {}
+
+export { tautology, defaultEqualityComparer, emptyGenerator };

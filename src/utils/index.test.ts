@@ -1,5 +1,5 @@
 import 'jest';
-import { isEnumerable, map, filter, reduce, sequenceEqual, zip } from '.';
+import { isEnumerable, map, filter, reduce, sequenceEqual, zip, repeat, concat } from '.';
 
 describe(isEnumerable, () => {
     test('array is iterable', () => {
@@ -116,6 +116,31 @@ describe(filter, () => {
         expect(sequenceEqual(
             filter([], x => Boolean(x % 2)),
             []
+        )).toBe(true);
+    });
+});
+
+describe(repeat, () => {
+    it('should return an empty sequence', () => {
+        expect(sequenceEqual(
+            [...repeat(1, 0)],
+            []
+        )).toBe(true);
+    });
+
+    it('should repeat n times', () => {
+        expect(sequenceEqual(
+            [...repeat(1, 3)],
+            [1, 1, 1]
+        )).toBe(true);
+    });
+});
+
+describe(concat, () => {
+    it('should concat', () => {
+        expect(sequenceEqual(
+            [...concat([0, 1, 2], [3, 4, 5], [6, 7, 8])],
+            [0, 1, 2, 3, 4, 5, 6, 7, 8]
         )).toBe(true);
     });
 });

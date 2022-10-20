@@ -202,4 +202,49 @@ describe(Enumerable, () => {
             expect(new Enumerable([0, 1, 2]).count(x => x >= 1)).toBe(2);
         });
     });
+
+    describe(Enumerable.prototype.prepend, () => {
+        it('should prepend', () => {
+            expect(sequenceEqual(
+                new Enumerable([3, 4, 5]).prepend([0, 1, 2]),
+                [0, 1, 2, 3, 4, 5]
+            )).toBe(true);
+        });
+    });
+
+    describe(Enumerable.prototype.append, () => {
+        it('should append', () => {
+            expect(sequenceEqual(
+                new Enumerable([0, 1, 2]).append([3, 4, 5]),
+                [0, 1, 2, 3, 4, 5]
+            )).toBe(true);
+        });
+    });
+
+    describe(Enumerable.prototype.groupBy, () => {
+        it('should group', () => {
+            const seq = [{ 
+                x: 1, y: 1 
+            }, {
+                x: 1, y: 2
+            }, {
+                x: 2, y: 3
+            }];
+
+            const result = new Enumerable(seq).groupBy<number, number[]>(
+                el => el.x, 
+                (el, l) => {
+                    l.push(el.y);
+                    return l;
+                },
+                () => []
+            );
+
+            expect(sequenceEqual(
+                result,
+                [[1, 2], [3]],
+                sequenceEqual
+            )).toBe(true);
+        });
+    });
 });

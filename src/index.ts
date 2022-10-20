@@ -1,20 +1,28 @@
 import _Enumerable from "./enumerable/base";
 import ArrayEnumerable from "./enumerable/array";
+import './enumerable/array/extension';
 import MapEnumerable from "./enumerable/map";
+import './enumerable/map/extension';
 import SetEnumerable from "./enumerable/set";
+import './enumerable/set/extension';
 import ObjectEnumerable from "./enumerable/object";
 
 import range from "./utils/range";
-import { isEnumerable, sequenceEqual } from "./utils";
+import { isEnumerable, sequenceEqual, repeat as _repeat, concat as _concat } from "./utils";
 
-import type { Constructor } from './types';
+import type { Constructor, uint } from './types';
+import { emptyGenerator } from "./utils/default-functions";
 
 namespace Enumerable {
-    export const TypeMap: [Constructor<object>, Constructor<_Enumerable<unknown>>][] = [
+    const TypeMap: [Constructor<object>, Constructor<_Enumerable<unknown>>][] = [
         [Array, ArrayEnumerable],
         [Set, SetEnumerable],
         [Map, MapEnumerable]
     ];
+
+    export function registerTypeMap(Type: Constructor<object>, Target: Constructor<_Enumerable<unknown>>): void {
+        TypeMap.push([Type, Target]);
+    }
 
     /**
      * creates an enumerable from an array
@@ -54,6 +62,26 @@ namespace Enumerable {
             return new ObjectEnumerable(object);
 
         throw new Error('object is not iterable');
+    }
+
+    /**
+     * @returns an empty enumerable
+     */
+    export function empty<T>(): _Enumerable<T> {
+        return new _Enumerable(emptyGenerator());
+    }
+
+    /**
+     * create a sequence consisting of n `item`
+     * @param item 
+     * @param count no. of repeating items
+     */
+    export function repeat<T>(item: T, count: uint): _Enumerable<T> {
+        return new _Enumerable(_repeat(item, count));
+    }
+
+    export function concat<T>(...args: _Enumerable<T>[]): _Enumerable<T> {
+        return new _Enumerable(_concat.apply<void, Iterable<T>[], Iterable<T>>(undefined, args));
     }
 }
 

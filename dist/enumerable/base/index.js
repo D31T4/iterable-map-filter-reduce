@@ -56,6 +56,13 @@ class Enumerable {
                 last = value;
         return last;
     }
+    /**
+     * @param index
+     * @returns the i-th element of the sequence.
+     */
+    elementAt(index) {
+        return this.skip(index).first();
+    }
     any(predicate) {
         predicate !== null && predicate !== void 0 ? predicate : (predicate = default_functions_1.tautology);
         for (const value of this)
@@ -98,26 +105,25 @@ class Enumerable {
         return this.filter(() => count++ >= n);
     }
     distinct(compare) {
-        let pred;
-        if (compare) {
-            const list = new Array();
-            pred = x => {
-                if (list.some(el => compare(el, x)))
-                    return false;
-                list.push(x);
-                return true;
-            };
-        }
-        else {
-            const set = new Set();
-            pred = x => {
-                if (set.has(x))
-                    return false;
-                set.add(x);
-                return true;
-            };
-        }
-        return this.filter(pred);
+        if (!compare)
+            return this.distinctBy(el => el);
+        const list = new Array();
+        return this.filter(el => {
+            if (list.some(x => compare(el, x)))
+                return false;
+            list.push(el);
+            return true;
+        });
+    }
+    distinctBy(key) {
+        const set = new Set();
+        return this.filter(el => {
+            const k = key(el);
+            if (set.has(k))
+                return false;
+            set.add(k);
+            return true;
+        });
     }
     /**
      * reverse the sequence
@@ -137,6 +143,47 @@ class Enumerable {
     }
     sequenceEqual(seq, compare) {
         return (0, utils_1.sequenceEqual)(this, seq, compare);
+    }
+    /**
+     * prepend sequences in front of this sequence
+     * @param args sequences to be prepended
+     */
+    prepend(...args) {
+        return new Enumerable((function* () {
+            for (const arg of args)
+                yield* arg;
+            yield* this;
+        }).call(this));
+    }
+    /**
+     * append sequences after this sequence
+     * @param args sequences to be appended
+     */
+    append(...args) {
+        return new Enumerable((function* () {
+            yield* this;
+            for (const arg of args)
+                yield* arg;
+        }).call(this));
+    }
+    /**
+     * group elements of the sequence
+     * @param key key deriver
+     * @param reducer aggregation function
+     * @param initializer
+     */
+    groupBy(key, reducer, initializer) {
+        const map = new Map();
+        for (const el of this) {
+            const k = key(el);
+            if (map.has(k)) {
+                map.set(k, reducer(el, map.get(k)));
+            }
+            else {
+                map.set(k, reducer(el, initializer()));
+            }
+        }
+        return new Enumerable(map).map(kv => kv[1]);
     }
 }
 exports.default = Enumerable;

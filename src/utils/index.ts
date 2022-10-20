@@ -110,3 +110,17 @@ export function* limit<T>(seq: Iterable<T>, n: uint): Iterable<T> {
     }
 }
 
+/**
+ * create a sequence consisting of n `item`
+ * @param item 
+ * @param n no. of repeating items
+ */
+export function* repeat<T>(item: T, n: uint): Iterable<T> {
+    for (let i = 0; i < n; ++i)
+        yield item;
+}
+
+export function* concat<T>(...args: Iterable<T>[]): Iterable<T> {
+    for (const arg of args)
+        yield* arg;
+}

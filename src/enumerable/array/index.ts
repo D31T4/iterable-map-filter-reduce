@@ -1,3 +1,4 @@
+import { tautology } from "../../utils/default-functions";
 import type { Predicate, uint } from "../../types";
 import Enumerable from "../base";
 
@@ -38,9 +39,19 @@ class ArrayEnumerable<T> extends Enumerable<T> {
     public last(): T | void;
     public last(predicate: Predicate<T>): T | void;
     public last(predicate?: Predicate<T>): T | void {
-        return predicate ?
-            super.last(predicate) :
-            this.internalEnumerable.at(-1);
+        predicate ??= tautology;
+
+        for (let i = this.internalEnumerable.length - 1; i >= 0; --i)
+            if (predicate(this.internalEnumerable[i]))
+                return this.internalEnumerable[i];
+
+        return undefined;
+    }
+
+    public elementAt(index: number): void | T {
+        return index >= 0 && index < this.internalEnumerable.length ?
+            this.internalEnumerable[index] :
+            undefined;
     }
 
     public reverse(): Enumerable<T> {

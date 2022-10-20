@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const default_functions_1 = require("../../utils/default-functions");
 const base_1 = __importDefault(require("../base"));
 require("./extension");
 /**wrapper class for objects */
@@ -26,9 +27,16 @@ class ArrayEnumerable extends base_1.default {
             this.internalEnumerable[0];
     }
     last(predicate) {
-        return predicate ?
-            super.last(predicate) :
-            this.internalEnumerable.at(-1);
+        predicate !== null && predicate !== void 0 ? predicate : (predicate = default_functions_1.tautology);
+        for (let i = this.internalEnumerable.length - 1; i >= 0; --i)
+            if (predicate(this.internalEnumerable[i]))
+                return this.internalEnumerable[i];
+        return undefined;
+    }
+    elementAt(index) {
+        return index >= 0 && index < this.internalEnumerable.length ?
+            this.internalEnumerable[index] :
+            undefined;
     }
     reverse() {
         return new base_1.default(reverse(this.internalEnumerable));

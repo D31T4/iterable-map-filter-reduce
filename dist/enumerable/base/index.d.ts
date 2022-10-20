@@ -45,6 +45,11 @@ declare class Enumerable<T> implements Iterable<T> {
      */
     last(predicate: Predicate<T>): T | void;
     /**
+     * @param index
+     * @returns the i-th element of the sequence.
+     */
+    elementAt(index: uint): T | void;
+    /**
      * check if the sequence contains any elements.
      * @returns `true` if the sequence contains at least 1 element; otherwise `false`.
      */
@@ -90,6 +95,7 @@ declare class Enumerable<T> implements Iterable<T> {
      */
     distinct(): Enumerable<T>;
     distinct(compare: EqualityComparer<T>): Enumerable<T>;
+    distinctBy<K>(key: (elm: T) => K): Enumerable<T>;
     /**
      * reverse the sequence
      */
@@ -103,5 +109,22 @@ declare class Enumerable<T> implements Iterable<T> {
     limit(n: uint): Enumerable<T>;
     sequenceEqual(seq: Iterable<T>): boolean;
     sequenceEqual(seq: Iterable<T>, compare: EqualityComparer<T>): boolean;
+    /**
+     * prepend sequences in front of this sequence
+     * @param args sequences to be prepended
+     */
+    prepend(...args: Iterable<T>[]): Enumerable<T>;
+    /**
+     * append sequences after this sequence
+     * @param args sequences to be appended
+     */
+    append(...args: Iterable<T>[]): Enumerable<T>;
+    /**
+     * group elements of the sequence
+     * @param key key deriver
+     * @param reducer aggregation function
+     * @param initializer
+     */
+    groupBy<K, A>(key: (el: T) => K, reducer: (el: T, current: A) => A, initializer: () => A): Enumerable<A>;
 }
 export default Enumerable;

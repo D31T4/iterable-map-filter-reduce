@@ -13,6 +13,7 @@ declare class ArrayEnumerable<T> extends Enumerable<T> {
     first(predicate: Predicate<T>): T | void;
     last(): T | void;
     last(predicate: Predicate<T>): T | void;
+    elementAt(index: number): void | T;
     reverse(): Enumerable<T>;
     skip(n: uint): Enumerable<T>;
 }

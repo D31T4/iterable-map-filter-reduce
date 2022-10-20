@@ -89,6 +89,14 @@ class Enumerable<T> implements Iterable<T> {
     }
 
     /**
+     * @param index
+     * @returns the i-th element of the sequence.
+     */
+    public elementAt(index: uint): T | void {
+        return this.skip(index).first();
+    }
+
+    /**
      * check if the sequence contains any elements.
      * @returns `true` if the sequence contains at least 1 element; otherwise `false`.
      */
@@ -173,30 +181,30 @@ class Enumerable<T> implements Iterable<T> {
     public distinct(): Enumerable<T>;
     public distinct(compare: EqualityComparer<T>): Enumerable<T>;
     public distinct(compare?: EqualityComparer<T>): Enumerable<T> {
-        let pred: Predicate<T>;
+        if (!compare)
+            return this.distinctBy(el => el);
 
-        if (compare) {
-            const list = new Array<T>();
+        const list = new Array<T>();
 
-            pred = x => {
-                if (list.some(el => compare(el, x)))
-                    return false;
+        return this.filter(el => {
+            if (list.some(x => compare(el, x)))
+                return false;
 
-                list.push(x);
-                return true;
-            };
-        } else {
-            const set = new Set<T>();
-            
-            pred = x => {
-                if (set.has(x)) return false;
+            list.push(el);
+            return true;
+        });
+    }
 
-                set.add(x);
-                return true;
-            };
-        }
+    public distinctBy<K>(key: (elm: T) => K): Enumerable<T> {
+        const set = new Set<K>();
 
-        return this.filter(pred);
+        return this.filter(el => {
+            const k = key(el);
+            if (set.has(k)) return false;
+
+            set.add(k);
+            return true;
+        });
     }
 
     /**
@@ -224,6 +232,58 @@ class Enumerable<T> implements Iterable<T> {
     public sequenceEqual(seq: Iterable<T>, compare: EqualityComparer<T>): boolean;
     public sequenceEqual(seq: Iterable<T>, compare?: EqualityComparer<T>): boolean {
         return sequenceEqual(this, seq, compare!);
+    }
+
+    /**
+     * prepend sequences in front of this sequence
+     * @param args sequences to be prepended
+     */
+    public prepend(...args: Iterable<T>[]): Enumerable<T> {
+        return new Enumerable((
+            function* (this: Enumerable<T>) {
+                for (const arg of args)
+                    yield* arg;
+
+                yield* this;
+            }
+        ).call(this));
+    }
+
+    /**
+     * append sequences after this sequence
+     * @param args sequences to be appended
+     */
+    public append(...args: Iterable<T>[]): Enumerable<T> {
+        return new Enumerable((
+            function* (this: Enumerable<T>) {
+                yield* this;
+
+                for (const arg of args)
+                    yield* arg;
+            }
+        ).call(this));
+    }
+
+    /**
+     * group elements of the sequence
+     * @param key key deriver
+     * @param reducer aggregation function
+     * @param initializer 
+     */
+    public groupBy<K, A>(key: (el: T) => K, reducer: (el: T, current: A) => A, initializer: () => A): Enumerable<A> {
+        const map = new Map<K, A>();
+
+        for (const el of this) {
+            const k = key(el);
+
+            if (map.has(k)) {
+                map.set(k, reducer(el, map.get(k)!));
+            } else {
+                map.set(k, reducer(el, initializer()));
+            }
+        }
+
+        return new Enumerable(map).map(kv => kv[1]);
     }
 }
 
